@@ -10,15 +10,15 @@ namespace App.AppCore.Applications
 {
     public class ProcessMinus : IProcessInputOutout
     {
-        private readonly IStorage _storage;
-        public ProcessMinus(IStorage storage) 
+        private readonly IStorage? _storage;
+        public ProcessMinus(IStorage? storage) 
         { 
             _storage = storage;
         }
         public async Task<bool> CheckIsValid(InputOutput inputOutput)
         {
             var result = inputOutput.Input1 - inputOutput.Input2 == inputOutput.Output;
-            await _storage.KeepInputOutput(inputOutput, result);
+            if (_storage != null) await _storage.KeepInputOutput(inputOutput, result);
             return result;
         }
     }

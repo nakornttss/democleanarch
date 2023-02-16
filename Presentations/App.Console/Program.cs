@@ -2,13 +2,22 @@
 using App.AppCore.Interfaces;
 using App.AppCore.Models;
 using App.File;
+using Newtonsoft.Json;
 
 IStorage storage = new KeepLogInFile();
 IProcessInputOutout process = new ProcessPlus(storage);
 
-var test = new InputOutput();
-test.Input1 = 1;
-test.Input2 = 2;
-test.Output = 3;
+string path = Path.Combine(Directory.GetCurrentDirectory(), "input.json");
 
-await process.CheckIsValid(test);
+var inputs = JsonConvert.DeserializeObject<List<InputOutput>>(await System.IO.File.ReadAllTextAsync(path));
+
+if(inputs != null)
+{
+    foreach (var test in inputs)
+    {
+        await process.CheckIsValid(test);
+        Thread.Sleep(1000);
+    }
+}
+ 
+

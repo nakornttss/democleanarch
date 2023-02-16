@@ -11,7 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IStorage, App.Database.KeepLogInDb>();
+//builder.Services.AddScoped<IStorage, App.Database.KeepLogInDb>();
 builder.Services.AddScoped<IProcessInputOutout, ProcessPlus>();
 
 builder.Services.AddDbContext<App.Database.AppContext>(c =>
