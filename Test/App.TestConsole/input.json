@@ -1,0 +1,22 @@
+﻿[
+  {
+    "Input1": 1,
+    "Input2": 2,
+    "Output": 3
+  },
+  {
+    "Input1": 1,
+    "Input2": 2,
+    "Output": 4
+  },
+  {
+    "Input1": 2,
+    "Input2": 4,
+    "Output": 8
+  },
+  {
+    "Input1": 2,
+    "Input2": 2,
+    "Output": 0
+  }
+]
