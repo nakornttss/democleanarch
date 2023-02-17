@@ -21,7 +21,7 @@ namespace App.File
             log.Output = inputOutput.Output;
             log.Result = isValid;
             log.ExecutionTime = DateTime.Now;
-            string json = JsonConvert.SerializeObject(log);
+            string json = JsonConvert.SerializeObject(log, Formatting.Indented);
             string path = @"C:\TestLogs\";
             if(!Directory.Exists(path)) Directory.CreateDirectory(path);
             await System.IO.File.WriteAllTextAsync(@"C:\TestLogs\" + log.ExecutionTime.ToString("ddMMyyyyHHmmss") + ".json", json);

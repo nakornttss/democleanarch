@@ -15,7 +15,7 @@ if(inputs != null)
 {
     foreach (var test in inputs)
     {
-        await process.CheckIsValid(test);
+        Console.WriteLine(await process.CheckIsValid(test));        
         Thread.Sleep(1000);
     }
 }

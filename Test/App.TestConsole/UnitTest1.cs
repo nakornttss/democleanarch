@@ -1,27 +1,50 @@
+using System.Diagnostics;
+using Newtonsoft.Json;
+
 namespace App.TestConsole
 {
     public class UnitTest1
     {
-        [Fact]
-        public void Test1()
+        [Theory]
+        [InlineData(1, 2, 3, true)]
+        [InlineData(1, 2, 0, false)]
+        [InlineData(99, 2, 100, false)]
+        public async void Test1(int input1, int input2, int output, bool correctResult)
         {
             string apppath = @"D:\WORK12\democleanarch\Presentations\App.Console\bin\Debug\net7.0";
-            string logpath = @"C:\TestLogs";
-
             string json = Path.Combine(apppath, "input.json");
             if (File.Exists(json)) File.Delete(json);
-            foreach (var log in Directory.GetFiles(logpath))
+
+            var test = new InputOutputForTest();
+            test.Input1 = input1;
+            test.Input2 = input2;
+            test.Output = output;
+
+            var testList = new List<InputOutputForTest>();
+            testList.Add(test);
+
+            var testContent = JsonConvert.SerializeObject(testList, Formatting.Indented);
+            await File.WriteAllTextAsync(json, testContent);
+
+            var proc = new Process
             {
-                File.Delete(log);
-            }
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "dotnet",
+                    Arguments = "App.Console.dll",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true,
+                    WorkingDirectory = apppath
+                }
+            };
 
-            string testpath = Path.Combine(Directory.GetCurrentDirectory(), "input.json");
-
-            File.Copy(json, testpath);
-
-            foreach (var log in Directory.GetFiles(logpath))
+            proc.Start();
+            while (!proc.StandardOutput.EndOfStream)
             {
-                
+                string? line = proc.StandardOutput.ReadLine();
+                var result = Convert.ToBoolean(line);
+                Assert.True(correctResult == result);
             }
         }
     }
