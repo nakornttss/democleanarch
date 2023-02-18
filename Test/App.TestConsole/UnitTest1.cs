@@ -7,7 +7,7 @@ namespace App.TestConsole
     {
         [Theory]
         [InlineData(1, 2, 3, true)]
-        [InlineData(1, 2, 0, false)]
+        [InlineData(1, 2, -9, false)]
         [InlineData(99, 2, 100, false)]
         public async void Test1(int input1, int input2, int output, bool correctResult)
         {

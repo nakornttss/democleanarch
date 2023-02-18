@@ -21,4 +21,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\AppCore\App.AppCore\App.AppCore.csproj" />
+    <ProjectReference Include="..\..\Infra\App.NoStorage\App.NoStorage.csproj" />
+  </ItemGroup>
+
 </Project>
