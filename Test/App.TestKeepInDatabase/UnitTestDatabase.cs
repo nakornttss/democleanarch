@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace App.TestKeepInDatabase
 {
-    public class UnitTest1
+    public class UnitTestDatabase
     {
         [Theory]
         [InlineData(1, 2, 3, true)]
         [InlineData(1, 2, -9, false)]
         [InlineData(99, 2, 100, false)]
-        public async void Test1(int input1, int input2, int output, bool correctResult)
+        public async void TestDatabase(int input1, int input2, int output, bool correctResult)
         {
             var db = new Database.AppContext();
             db.RemoveRange(db.ResultLogs);

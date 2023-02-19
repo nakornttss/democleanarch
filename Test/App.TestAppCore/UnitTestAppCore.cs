@@ -5,7 +5,7 @@ using App.NoStorage;
 
 namespace App.TestAppCore
 {
-    public class UnitTest1
+    public class UnitTestAppCore
     {
         [Theory]
         [InlineData(1, 2, 3, true)]

@@ -15,9 +15,18 @@ namespace App.Api.Controllers
         }
 
         [HttpPost(Name = "CheckNumberTestResult")]
-        public async Task<bool> CheckNumberTestResult([FromBody]InputOutput inputOutput)
+        public async Task<IActionResult> CheckNumberTestResult([FromBody]InputOutput inputOutput)
         {
-            return await _processInputOutout.CheckIsValid(inputOutput);
+            if (!inputOutput.ValidateInput) return BadRequest();
+
+            try
+            {
+                return Ok(await _processInputOutout.CheckIsValid(inputOutput));
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }            
         }
     }
 }

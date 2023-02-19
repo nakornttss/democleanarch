@@ -1,20 +1,25 @@
 using App.AppCore.Models;
 using App.File;
 using App.File.Models;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace App.TestKeepInFile
 {
-    public class UnitTest1
+    public class UnitTestFile
     {
         [Theory]
         [InlineData(1, 2, 3, true)]
         [InlineData(1, 2, -9, false)]
         [InlineData(99, 2, 100, false)]
-        public async void Test1(int input1, int input2, int output, bool correctResult)
+        public async void TestFile(int input1, int input2, int output, bool correctResult)
         {
-            var logpath = @"C:\TestLogs";
-            if(Directory.Exists(logpath)) Directory.Delete(logpath, true);
+            var config = new ConfigurationBuilder()
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                    .Build();
+
+            var logpath = config["LogPath"];
+            if (Directory.Exists(logpath)) Directory.Delete(logpath, true);
             Directory.CreateDirectory(logpath);
 
             var inputOutput = new InputOutput();

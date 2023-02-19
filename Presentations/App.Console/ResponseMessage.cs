@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace App.Console
 {
-    class ResponseMessage
+    public class ResponseMessage
     {
         public int Status { get; set; }
         public string? Message { get; set; }
