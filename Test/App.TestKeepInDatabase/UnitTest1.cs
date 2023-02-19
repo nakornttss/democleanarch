@@ -1,7 +1,6 @@
 using App.AppCore.Models;
 using App.Database;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace App.TestKeepInDatabase
 {
