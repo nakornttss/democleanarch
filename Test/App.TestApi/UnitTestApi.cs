@@ -19,17 +19,18 @@ namespace App.TestApi
                     .Build();
 
                 // Create a new HttpClient object
-                using var httpClient = new HttpClient();
+                using (var httpClient = new HttpClient())
+                {
+                    // Create the request content with the data to send
+                    var data = new { input1 = input1, input2 = input2, output = output };
+                    var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
 
-                // Create the request content with the data to send
-                var data = new { input1 = input1, input2 = input2, output = output };
-                var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+                    // Send the request
+                    var response = await httpClient.PostAsync(config["ApiPath"], content);
 
-                // Send the request
-                var response = await httpClient.PostAsync(config["ApiPath"], content);
-
-                // Check the response status code
-                Assert.True(((int)response.StatusCode) == expectedStatus);
+                    // Check the response status code
+                    Assert.True(((int)response.StatusCode) == expectedStatus);
+                }                    
             }
             catch(Exception ex)
             {
