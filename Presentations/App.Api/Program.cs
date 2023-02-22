@@ -1,6 +1,8 @@
+using App.Api;
 using App.AppCore.Applications;
 using App.AppCore.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,38 +20,44 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+// Configure options
+var executionConfig = new ExecutionOptions();
+config.GetSection(ExecutionOptions.TagName).Bind(executionConfig);
+
+builder.Services.Configure<ExecutionOptions>(
+    builder.Configuration.GetSection(ExecutionOptions.TagName));
+
 // Select storage base on configuration
-if (config["Execution:Storage"] == "NoStorage")
+if (executionConfig.Storage == AppStorage.NoStorage)
 {
     builder.Services.AddScoped<IStorage, App.NoStorage.DoNotKeep>();
 }
-else if (config["Execution:Storage"] == "File")
+else if (executionConfig.Storage == AppStorage.File)
 {
     builder.Services.AddScoped<IStorage, App.File.KeepLogInFile>();
 }
-else if (config["Execution:Storage"] == "Database")
+else if (executionConfig.Storage == AppStorage.Database)
 {
     builder.Services.AddScoped<IStorage, App.Database.KeepLogInDb>();
 }
 
 // Select process base on configuration
-if (config["Execution:AppCore"] == "ProcessMock")
+if (executionConfig.AppCore == AppCore.ProcessMock)
 {
     builder.Services.AddScoped<IProcessInputOutout, ProcessMock>();
 }
-else if (config["Execution:AppCore"] == "ProcessMinus")
+else if (executionConfig.AppCore == AppCore.ProcessMinus)
 {
     builder.Services.AddScoped<IProcessInputOutout, ProcessMinus>();
 }
-else if (config["Execution:AppCore"] == "ProcessPlus")
+else if (executionConfig.AppCore == AppCore.ProcessPlus)
 {
     builder.Services.AddScoped<IProcessInputOutout, ProcessPlus>();
 }
 
-
-
 builder.Services.AddDbContext<App.Database.AppContext>(c =>
-    c.UseSqlServer(@"Server=.\\SQLEXPRESS;Integrated Security=true;Initial Catalog=cleandb;TrustServerCertificate=True")
+    c.UseSqlServer(config.GetConnectionString("DefaultConnection"))
 );
 
 var app = builder.Build();
@@ -68,3 +76,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
