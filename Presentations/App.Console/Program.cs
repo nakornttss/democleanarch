@@ -5,7 +5,6 @@ using App.File;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Configuration;
 using App.Console;
-using static System.Net.Mime.MediaTypeNames;
 
 var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -14,30 +13,34 @@ var config = new ConfigurationBuilder()
 IStorage storage = new App.NoStorage.DoNotKeep(); // Default storage
 IProcessInputOutout process = new ProcessMock(storage); // Default process
 
+// Configure options
+var executionConfig = new ExecutionOptions();
+config.GetSection(ExecutionOptions.TagName).Bind(executionConfig);
+
 // Select storage base on configuration
-if (config["Execution:Storage"] == "NoStorage")
+if (executionConfig.Storage == AppStorage.NoStorage)
 {
     storage = new App.NoStorage.DoNotKeep();
 }
-else if (config["Execution:Storage"] == "File")
+else if (executionConfig.Storage == AppStorage.File)
 {
     storage = new App.File.KeepLogInFile();
 }
-else if (config["Execution:Storage"] == "Database")
+else if (executionConfig.Storage == AppStorage.Database)
 {
     storage = new App.Database.KeepLogInDb();
 }
 
 // Select process base on configuration
-if (config["Execution:AppCore"] == "ProcessMock")
+if (executionConfig.AppCore == AppCore.ProcessMock)
 {
     process = new ProcessMock(storage);
 }
-else if (config["Execution:AppCore"] == "ProcessMinus")
+else if (executionConfig.AppCore == AppCore.ProcessMinus)
 {
     process = new ProcessMinus(storage);
 }
-else if (config["Execution:AppCore"] == "ProcessPlus")
+else if (executionConfig.AppCore == AppCore.ProcessPlus)
 {
     process = new ProcessPlus(storage);
 }
@@ -75,19 +78,4 @@ catch(Exception ex)
 
 var responseText = JsonConvert.SerializeObject(response, Formatting.Indented);
 Console.WriteLine(responseText);
-
-/*
-string path = Path.Combine(Directory.GetCurrentDirectory(), "input.json");
-
-var inputs = JsonConvert.DeserializeObject<List<InputOutput>>(await System.IO.File.ReadAllTextAsync(path));
-
-if(inputs != null)
-{
-    foreach (var test in inputs)
-    {
-        Console.WriteLine(await process.CheckIsValid(test));        
-        Thread.Sleep(1000);
-    }
-}
-*/
 
