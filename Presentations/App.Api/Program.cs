@@ -6,22 +6,31 @@ using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
+#region recommendation
 
+// =================================================================
 // In case you want to add more configuration such as read from Azure Vault, you can add like this
+// You can find more provider from https://learn.microsoft.com/en-us/dotnet/core/extensions/configuration-providers
+// =================================================================
 
 //builder.Configuration
-//    .AddEnvironmentVariables(); // azure is here
+//    .AddEnvironmentVariables(); // other configuration here
 
+// =================================================================
 // In case you do not want to use default configuration in builder.Configuration such as you need your order of configuration reading
-// you can make your customization here. 
+// you can make your customization here. Clear existing builder.Configuration.Sources.Clear() then add new 
 // If you want to do so, change builder.Configuration to config for all code in this file
+// =================================================================
+
+//builder.Configuration.Sources.Clear();
 
 //var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
-//var config = new ConfigurationBuilder()
-//                            .AddJsonFile("appsettings.json", optional: true, true)
-//                            .AddJsonFile($"appsettings.{environment}.json", true, true)
-//                            .AddEnvironmentVariables()
-//                            .Build();
+//builder.Configuration.AddJsonFile("appsettings.json", optional: true, true)
+//                .AddJsonFile($"appsettings.{environment}.json", true, true)
+//                .AddEnvironmentVariables()
+//                .Build();
+
+#endregion
 
 // Add services to the container.
 
@@ -30,12 +39,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
 // Configure options
+builder.Services.Configure<ExecutionOptions>(
+    builder.Configuration.GetSection(ExecutionOptions.TagName));
+
 var executionConfig = new ExecutionOptions();
 builder.Configuration.GetSection(ExecutionOptions.TagName).Bind(executionConfig);
-
-builder.Services.Configure<ExecutionOptions>(builder.Configuration.GetSection(ExecutionOptions.TagName));
 
 // Select storage base on configuration
 if (executionConfig.Storage == AppStorage.NoStorage)

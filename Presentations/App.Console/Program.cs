@@ -5,6 +5,8 @@ using App.File;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Configuration;
 using App.Console;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -78,4 +80,5 @@ catch(Exception ex)
 
 var responseText = JsonConvert.SerializeObject(response, Formatting.Indented);
 Console.WriteLine(responseText);
+
 
