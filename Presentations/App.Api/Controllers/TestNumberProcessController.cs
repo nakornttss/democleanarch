@@ -1,6 +1,7 @@
 using App.AppCore.Interfaces;
 using App.AppCore.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace App.Api.Controllers
 {
@@ -9,9 +10,17 @@ namespace App.Api.Controllers
     public class TestNumberProcessController : ControllerBase
     {
         private readonly IProcessInputOutout _processInputOutout;
-        public TestNumberProcessController(IProcessInputOutout processInputOutout)
+        private readonly IConfiguration _configuration;
+        private readonly ExecutionOptions _options;
+        public TestNumberProcessController(
+            IProcessInputOutout processInputOutout, 
+            IConfiguration configuration,
+            IOptions<ExecutionOptions> options
+            )
         {
             _processInputOutout = processInputOutout;
+            _configuration = configuration;
+            _options = options.Value;
         }
 
         [HttpPost(Name = "CheckNumberTestResult")]
@@ -27,6 +36,12 @@ namespace App.Api.Controllers
             {
                 return StatusCode(500, ex.Message);
             }            
+        }
+
+        [HttpGet("GetConfiguration")]
+        public IActionResult GetConfiguration()
+        {
+            return Ok(_options.AppCore.ToString());
         }
     }
 }

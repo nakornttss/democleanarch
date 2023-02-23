@@ -6,12 +6,22 @@ using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
-var config = new ConfigurationBuilder()
-                            .AddJsonFile("appsettings.json", optional: true, true)
-                            .AddJsonFile($"appsettings.{environment}.json", true, true)
-                            .AddEnvironmentVariables()
-                            .Build();
+
+// In case you want to add more configuration such as read from Azure Vault, you can add like this
+
+//builder.Configuration
+//    .AddEnvironmentVariables(); // azure is here
+
+// In case you do not want to use default configuration in builder.Configuration such as you need your order of configuration reading
+// you can make your customization here. 
+// If you want to do so, change builder.Configuration to config for all code in this file
+
+//var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
+//var config = new ConfigurationBuilder()
+//                            .AddJsonFile("appsettings.json", optional: true, true)
+//                            .AddJsonFile($"appsettings.{environment}.json", true, true)
+//                            .AddEnvironmentVariables()
+//                            .Build();
 
 // Add services to the container.
 
@@ -23,10 +33,9 @@ builder.Services.AddSwaggerGen();
 
 // Configure options
 var executionConfig = new ExecutionOptions();
-config.GetSection(ExecutionOptions.TagName).Bind(executionConfig);
+builder.Configuration.GetSection(ExecutionOptions.TagName).Bind(executionConfig);
 
-builder.Services.Configure<ExecutionOptions>(
-    builder.Configuration.GetSection(ExecutionOptions.TagName));
+builder.Services.Configure<ExecutionOptions>(builder.Configuration.GetSection(ExecutionOptions.TagName));
 
 // Select storage base on configuration
 if (executionConfig.Storage == AppStorage.NoStorage)
@@ -57,7 +66,7 @@ else if (executionConfig.AppCore == AppCore.ProcessPlus)
 }
 
 builder.Services.AddDbContext<App.Database.AppContext>(c =>
-    c.UseSqlServer(config.GetConnectionString("DefaultConnection"))
+    c.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
 var app = builder.Build();
